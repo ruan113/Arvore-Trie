@@ -11,6 +11,10 @@
  * Created on 24 de Junho de 2018, 18:58
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #ifndef TST_H
 #define TST_H
 
@@ -37,6 +41,7 @@ no* criar_no(char letra);//Cria um no
 void inserir_palavra(arvore *a, no* n, no* anterior, char* palavra, int noAtual);//Insere uma nova palavra na arvore
 void printarPalavras(no* n, char* aux, int contador);//Printa todas as palavras da arvore
 int buscarPalavra(no* n, char* palavra, int noAtual);//Busca palavra
+no* buscaUltimoNo(no* n, char* palavra, int contador);//Procura o ultimo no referente a ultima letra de uma string
 
 #endif /* TST_H */
 

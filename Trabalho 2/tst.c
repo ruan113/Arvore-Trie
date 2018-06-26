@@ -11,21 +11,19 @@
  * Created on 24 de Junho de 2018, 18:57
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "tst.h"
 
 no* criar_no(char letra) {
+    //Aloca memoria
     no *novoNo = (no*) malloc(sizeof (no));
 
-    novoNo->letra = letra;
-    novoNo->fim = 0;
-    novoNo->dir = NULL;
-    novoNo->esq = NULL;
-    novoNo->meio = NULL;
+    novoNo->letra = letra; //letra que marca o no
+    novoNo->fim = 0; //marca se o no e fim ou nao de string
+    novoNo->dir = NULL; //marca o filho a direita
+    novoNo->esq = NULL; //marca o filho a esquerda
+    novoNo->meio = NULL; //marca o filho do meio
 
-    return novoNo;
+    return novoNo; //retorna o no alocado
 }
 
 void inserir_palavra(arvore *a, no* n, no* anterior, char *palavra, int noAtual) {
@@ -33,9 +31,11 @@ void inserir_palavra(arvore *a, no* n, no* anterior, char *palavra, int noAtual)
     //verifica se o local esta vazio, isso significa que podemos inserir a palavra por completo nele
     if (n == NULL) {
         n = criar_no(palavra[noAtual]);
-        if(a->raiz == NULL)
+
+        //Verifica se a raiz e null, caso seja, seta o novo no como raiz
+        if (a->raiz == NULL)
             a->raiz = n;
-        
+
         if (anterior != NULL) {
             //Aponta o ponteiro do no anterior para o novo no
             if (anterior->letra == palavra[noAtual - 1])
@@ -45,26 +45,29 @@ void inserir_palavra(arvore *a, no* n, no* anterior, char *palavra, int noAtual)
             else if (anterior->letra < n->letra)
                 anterior->dir = n;
         }
-        
+        //printf("%c\n", n->letra);
         //Se a ultima insercao tiver sido da ultima letra, seta esta letra como final de string
         //e para a recursao
-        if (strlen(palavra) == noAtual + 1)
+        //printf("%zd\n",strlen(palavra));
+        if (strlen(palavra) >= noAtual + 1) {
             n->fim = 1;
-        else
-            inserir_palavra(a,n->meio, n, palavra, noAtual + 1);
+            return;
+        } else {
+            inserir_palavra(a, n->meio, n, palavra, noAtual + 1);
+        }
     } else {
         //Se a arvore nao esta vazia, iremos fazer comparacoes para achar o local para melhor alocar cada letra
         //Se a letra analizada e menor que a que quer ser inserida, vamos para a direita
         if (palavra[noAtual] > n->letra) {
-            inserir_palavra(a,n->dir, n, palavra, noAtual);
+            inserir_palavra(a, n->dir, n, palavra, noAtual);
         } else {
             //Se a letra analizada e maior que a que quer ser inserida, vamos para a esquerda
             if (palavra[noAtual] < n->letra) {
-                inserir_palavra(a,n->esq, n, palavra, noAtual);
+                inserir_palavra(a, n->esq, n, palavra, noAtual);
             } else {
                 //Se a letra analizada e igual que a que quer ser inserida, vamos para o meio
                 //e acrescentamos um no contador do vetor, para indicar que a letra ja exista entao nao precisa inserir
-                inserir_palavra(a,n->meio, n, palavra, noAtual + 1);
+                inserir_palavra(a, n->meio, n, palavra, noAtual + 1);
             }
         }
     }
@@ -104,7 +107,7 @@ void printarPalavras(no* n, char* aux, int contador) {
         }
 
         //verificamos todo o meio
-        printarPalavras(n->meio, aux, contador+1);
+        printarPalavras(n->meio, aux, contador + 1);
 
         //E por fim verificamos toda a direita
         printarPalavras(n->dir, aux, contador);
@@ -114,4 +117,31 @@ void printarPalavras(no* n, char* aux, int contador) {
          * Esta ordem garante que as palavras serao impressas em ordem crescente!
          */
     }
+}
+
+no* buscaUltimoNo(no* n, char* palavra, int contador) {
+
+    //Trata erro de envio de no nulo
+    if (n == NULL) {
+        printf("No enviado e nulo!\n");
+        return;
+    }
+
+    //Trata erro de envio de palavra vazia
+    if (strlen(palavra) == 0) {
+        printf("Digite uma palavra primeiro !\n");
+        return;
+    }
+
+    //se a proxima letra for o marcador do fim da string, retorne o no que esta sendo analizado
+    if (palavra[contador + 1] == '\0')
+        return n;
+
+    //Caso a palavra nao esteja no fim ainda, ande pela arvore seguindo as seguintes regras:
+    if (n->letra > palavra[contador])//Se a letra da arvore for maior que a analizada, vamos para a esquerda 
+        return buscaUltimoNo(n->esq, palavra, contador);
+    else if (n->letra < palavra[contador])//Se a letra da arvore for menor que a analizada, vamos para a direita
+        return buscaUltimoNo(n->dir, palavra, contador);
+    else //Se a letra da arvore for igual que a analizada, verificamos se nao e o fim, caso nao... seguimos pelo meio, senao achamos a palavra completa
+        return buscaUltimoNo(n->meio, palavra, contador + 1);
 }
