@@ -14,7 +14,7 @@
 #ifndef TST_H
 #define TST_H
 
-struct NO{
+typedef struct NO{
     char letra;//Armazena a letra que o no vai representar
     struct NO *dir,*esq,*meio;//Caracteristica da arvore tst e ter 3 nos
     /*
@@ -27,17 +27,14 @@ struct NO{
      * e o no a direta tem que ser maior.
      */
     int fim;
-};
+}no;
 
-struct TST_TREE{
+typedef struct TST_TREE{
     struct NO *raiz;//Armazena a raiz da arvore
-};
+}arvore;
 
-typedef struct NO no;
-typedef struct TST_TREE arvore;
-
-void inserir_palavra(no* n, no* anterior, char* palavra, int noAtual);//Insere uma nova palavra na arvore
 no* criar_no(char letra);//Cria um no
+void inserir_palavra(arvore *a, no* n, no* anterior, char* palavra, int noAtual);//Insere uma nova palavra na arvore
 void printarPalavras(no* n, char* aux, int contador);//Printa todas as palavras da arvore
 int buscarPalavra(no* n, char* palavra, int noAtual);//Busca palavra
 

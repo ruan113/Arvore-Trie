@@ -28,44 +28,44 @@ no* criar_no(char letra) {
     return novoNo;
 }
 
-void inserir_palavra(no* n, no* anterior, char *palavra, int noAtual) {
+void inserir_palavra(arvore *a, no* n, no* anterior, char *palavra, int noAtual) {
 
     //verifica se o local esta vazio, isso significa que podemos inserir a palavra por completo nele
     if (n == NULL) {
         n = criar_no(palavra[noAtual]);
-
+        if(a->raiz == NULL)
+            a->raiz = n;
+        
         if (anterior != NULL) {
             //Aponta o ponteiro do no anterior para o novo no
-            if (anterior->letra > n->letra)
+            if (anterior->letra == palavra[noAtual - 1])
+                anterior->meio = n;
+            else if (anterior->letra > n->letra)
                 anterior->esq = n;
             else if (anterior->letra < n->letra)
                 anterior->dir = n;
-            else if (anterior->letra == palavra[noAtual - 1])
-                anterior->meio = n;
         }
-        //printf("%c\n",n->letra);
+        
         //Se a ultima insercao tiver sido da ultima letra, seta esta letra como final de string
         //e para a recursao
         if (strlen(palavra) == noAtual + 1)
             n->fim = 1;
         else
-            inserir_palavra(n->meio, n, palavra, noAtual + 1);
-
-        return;
-    }
-
-    //Se a arvore nao esta vazia, iremos fazer comparacoes para achar o local para melhor alocar cada letra
-    //Se a letra analizada e menor que a que quer ser inserida, vamos para a direita
-    if (palavra[noAtual] > n->letra) {
-        inserir_palavra(n->dir, n, palavra, noAtual);
+            inserir_palavra(a,n->meio, n, palavra, noAtual + 1);
     } else {
-        //Se a letra analizada e maior que a que quer ser inserida, vamos para a esquerda
-        if (palavra[noAtual] < n->letra) {
-            inserir_palavra(n->esq, n, palavra, noAtual);
+        //Se a arvore nao esta vazia, iremos fazer comparacoes para achar o local para melhor alocar cada letra
+        //Se a letra analizada e menor que a que quer ser inserida, vamos para a direita
+        if (palavra[noAtual] > n->letra) {
+            inserir_palavra(a,n->dir, n, palavra, noAtual);
         } else {
-            //Se a letra analizada e igual que a que quer ser inserida, vamos para o meio
-            //e acrescentamos um no contador do vetor, para indicar que a letra ja exista entao nao precisa inserir
-            inserir_palavra(n->meio, n, palavra, noAtual + 1);
+            //Se a letra analizada e maior que a que quer ser inserida, vamos para a esquerda
+            if (palavra[noAtual] < n->letra) {
+                inserir_palavra(a,n->esq, n, palavra, noAtual);
+            } else {
+                //Se a letra analizada e igual que a que quer ser inserida, vamos para o meio
+                //e acrescentamos um no contador do vetor, para indicar que a letra ja exista entao nao precisa inserir
+                inserir_palavra(a,n->meio, n, palavra, noAtual + 1);
+            }
         }
     }
 }
@@ -104,7 +104,7 @@ void printarPalavras(no* n, char* aux, int contador) {
         }
 
         //verificamos todo o meio
-        printarPalavras(n->meio, aux, contador);
+        printarPalavras(n->meio, aux, contador+1);
 
         //E por fim verificamos toda a direita
         printarPalavras(n->dir, aux, contador);
